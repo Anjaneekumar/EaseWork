@@ -3,6 +3,7 @@ import express, {NextFunction,Request,Response} from "express";
 import cors from "cors";
 import session from "cookie-session";
 import { config } from "./config/app.config";
+import connectDatabase from "./config/database.config";
 
 
 const app = express();
@@ -22,3 +23,19 @@ app.use(
         sameSite: "lax",
     })
 );
+
+app.use(cors({
+    origin:config.FRONTEND_ORIGIN,
+    credentials: true,
+}));
+
+app.get("/",(req:Request, res:Response, next: NextFunction)=>{
+    res.status(200).json({
+        message:"Welcome to Working Site!"
+    });
+});
+
+app.listen(config.PORT, async () =>{
+    console.log(`Server is listening on port ${config.PORT} in ${config.NODE_ENV}`);
+    await connectDatabase();
+});
